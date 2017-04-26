@@ -2,8 +2,8 @@
 
 // Константа с папками
 const dirs = {
-  source: 'src',
-  build: 'build',
+  source: 'src',  // папка с исходниками (путь от корня проекта)
+  build: 'build', // папка с результатом работы (путь от корня проекта)
 };
 
 // Определим необходимые инструменты
@@ -36,38 +36,38 @@ const spritesmith = require('gulp.spritesmith');
 const buffer = require('vinyl-buffer');
 const merge = require('merge-stream');
 
-// ЗАДАЧА: Компиляция препроцессора
+// ЗАДАЧА: Компиляция и обработка стилей
 gulp.task('style', function(){
-  return gulp.src(dirs.source + '/scss/style.scss')         // какой файл компилировать (путь из константы)
-    .pipe(plumber({ errorHandler: onError }))
+  return gulp.src(dirs.source + '/scss/style.scss')         // какой файл компилировать
+    .pipe(plumber({ errorHandler: onError }))               // при ошибках не останавливаем автоматику сборки
     .pipe(sourcemaps.init())                                // инициируем карту кода
     .pipe(sass())                                           // компилируем
-    .pipe(postcss([                                         // делаем постпроцессинг
-        autoprefixer({ browsers: ['last 2 version'] }),     // автопрефиксирование
-        mqpacker({ sort: true }),                           // объединение медиавыражений
+    .pipe(postcss([                                         // делаем постпроцессинг, а именно:
+        autoprefixer({ browsers: ['last 2 version'] }),     //   - автопрефиксирование
+        mqpacker({ sort: true }),                           //   - объединение медиавыражений
     ]))
-    .pipe(sourcemaps.write('/'))                            // записываем карту кода как отдельный файл (путь из константы)
-    .pipe(gulp.dest(dirs.build + '/css/'))                  // записываем CSS-файл (путь из константы)
-    .pipe(browserSync.stream())
-    .pipe(rename('style.min.css'))                          // переименовываем
-    .pipe(cleanCSS())                                       // сжимаем
-    .pipe(gulp.dest(dirs.build + '/css/'));                 // записываем CSS-файл (путь из константы)
+    .pipe(sourcemaps.write('/'))                            // записываем карту кода как отдельный файл
+    .pipe(gulp.dest(dirs.build + '/css/'))                  // записываем CSS-файл (указано куда)
+    .pipe(browserSync.stream())                             // автообновим в браузере
+    .pipe(rename('style.min.css'))                          // переименовываем (сейчас запишем рядом то же самое, но минимизированное)
+    .pipe(cleanCSS())                                       // сжимаем и оптимизирует
+    .pipe(gulp.dest(dirs.build + '/css/'));                 // записываем сжатый CSS-файл (указано куда)
 });
 
 // ЗАДАЧА: Сборка HTML
 gulp.task('html', function() {
-  return gulp.src(dirs.source + '/*.html')                  // какие файлы обрабатывать (путь из константы, маска имени)
-    .pipe(plumber({ errorHandler: onError }))
-    .pipe(fileinclude({                                     // обрабатываем gulp-file-include
+  return gulp.src(dirs.source + '/*.html')                  // какие файлы обрабатывать
+    .pipe(plumber({ errorHandler: onError }))               // при ошибках не останавливаем автоматику сборки
+    .pipe(fileinclude({                                     // обрабатываем файлы пакетом gulp-file-include
       prefix: '@@',
       basepath: '@file',
       indent: true,
     }))
     .pipe(replace(/\n\s*<!--DEV[\s\S]+?-->/gm, ''))         // убираем комментарии <!--DEV ... -->
-    .pipe(gulp.dest(dirs.build));                           // записываем файлы (путь из константы)
+    .pipe(gulp.dest(dirs.build));                           // записываем файлы
 });
 
-// Сборка pug (использовать не обязательно)
+// ЗАДАЧА: Сборка pug (использовать не обязательно)
 gulp.task('pug', function() {
   return gulp.src(dirs.source + '/**/*.pug')
     .pipe(plumber({ errorHandler: onError }))
@@ -78,19 +78,19 @@ gulp.task('pug', function() {
 // ЗАДАЧА: Копирование изображений
 gulp.task('img', function () {
   return gulp.src([
-        dirs.source + '/img/*.{gif,png,jpg,jpeg,svg}',      // какие файлы обрабатывать (путь из константы, маска имени, много расширений)
+        dirs.source + '/img/*.{gif,png,jpg,jpeg,svg}',      // какие файлы обрабатывать
       ],
       {since: gulp.lastRun('img')}                          // оставим в потоке обработки только изменившиеся от последнего запуска задачи (в этой сессии) файлы
     )
     .pipe(plumber({ errorHandler: onError }))
-    .pipe(newer(dirs.build + '/img'))                       // оставить в потоке только новые файлы (сравниваем с содержимым папки билда)
-    .pipe(gulp.dest(dirs.build + '/img'));                  // записываем файлы (путь из константы)
+    .pipe(newer(dirs.build + '/img'))                       // оставить в потоке только новые файлы (сравниваем с содержимым соотв. подпапки билда)
+    .pipe(gulp.dest(dirs.build + '/img'));                  // записываем файлы
 });
 
-// ЗАДАЧА: Оптимизация изображений (ЗАДАЧА ЗАПУСКАЕТСЯ ТОЛЬКО ВРУЧНУЮ)
+// ЗАДАЧА ЗАПУСКАЕТСЯ ТОЛЬКО ВРУЧНУЮ: Оптимизация изображений
 gulp.task('img:opt', function () {
   return gulp.src([
-      dirs.source + '/img/*.{gif,png,jpg,jpeg,svg}',        // какие файлы обрабатывать (путь из константы, маска имени, много расширений)
+      dirs.source + '/img/*.{gif,png,jpg,jpeg,svg}',        // какие файлы обрабатывать
       '!' + dirs.source + '/img/sprite-svg.svg',            // SVG-спрайт брать в обработку не будем
     ])
     .pipe(plumber({ errorHandler: onError }))
@@ -99,7 +99,7 @@ gulp.task('img:opt', function () {
       svgoPlugins: [{removeViewBox: false}],
       use: [pngquant()]
     }))
-    .pipe(gulp.dest(dirs.source + '/img'));                  // записываем файлы в исходную папку
+    .pipe(gulp.dest(dirs.source + '/img'));                  // записываем файлы В ИСХОДНУЮ ПАПКУ
 });
 
 // ЗАДАЧА: Сборка SVG-спрайта
@@ -107,8 +107,7 @@ gulp.task('svgstore', function (callback) {
   let spritePath = dirs.source + '/img/svg-sprite';          // константа с путем к исходникам SVG-спрайта
   if(fileExist(spritePath) !== false) {
     return gulp.src(spritePath + '/*.svg')                   // берем только SVG файлы из этой папки, подпапки игнорируем
-      // .pipe(plumber({ errorHandler: onError }))
-      .pipe(svgmin(function (file) {
+      .pipe(svgmin(function (file) {                         // оптимизируем SVG, поступивший на вход
         return {
           plugins: [{
             cleanupIDs: {
@@ -117,12 +116,12 @@ gulp.task('svgstore', function (callback) {
           }]
         }
       }))
-      .pipe(svgstore({ inlineSvg: true }))
-      .pipe(cheerio(function ($) {
-        $('svg').attr('style',  'display:none');             // дописываем получающемуся SVG-спрайту инлайновое сокрытие
+      .pipe(svgstore({ inlineSvg: true }))                   // шьем спрайт
+      .pipe(cheerio(function ($) {                           // дописываем получающемуся SVG-спрайту инлайновое сокрытие
+        $('svg').attr('style',  'display:none');
       }))
-      .pipe(rename('sprite-svg.svg'))
-      .pipe(gulp.dest(dirs.source + '/img'));
+      .pipe(rename('sprite-svg.svg'))                        // именуем результат
+      .pipe(gulp.dest(dirs.source + '/img'));                // записываем результат В ПАПКУ ИСХОДНИКОВ (он оттуда будет скопирован в папку билда как и все прочие картинки)
   }
   else {
     console.log('Нет файлов для сборки SVG-спрайта');
@@ -131,22 +130,21 @@ gulp.task('svgstore', function (callback) {
 });
 
 // ЗАДАЧА: сшивка PNG-спрайта
-// TODO перевести на Sass
 gulp.task('png:sprite', function () {
-  let fileName = 'sprite-' + Math.random().toString().replace(/[^0-9]/g, '') + '.png';
-  let spriteData = gulp.src('src/img/png-sprite/*.png')
-    .pipe(plumber({ errorHandler: onError }))
-    .pipe(spritesmith({
-      imgName: fileName,
-      cssName: 'sprite.scss',
-      padding: 4,
-      imgPath: '../img/' + fileName
+  let fileName = 'sprite-' + Math.random().toString().replace(/[^0-9]/g, '') + '.png'; // формируем случайное и уникальное имя файла
+  let spriteData = gulp.src('src/img/png-sprite/*.png')     // получаем список файлов для создания спрайта
+    .pipe(plumber({ errorHandler: onError }))               // не останавливаем автоматику при ошибках
+    .pipe(spritesmith({                                     // шьем спрайт:
+      imgName: fileName,                                    //   - имя файла (сформировано чуть выше)
+      cssName: 'sprite.scss',                               //   - имя генерируемого стилевого файла (там примеси для комфортного использования частей спрайта)
+      padding: 4,                                           //   - отступ между составными частями спрайта
+      imgPath: '../img/' + fileName                         //   - путь к файлу картинки спрайта (используеися в генерируемом стилевом файле спрайта)
     }));
-  let imgStream = spriteData.img
+  let imgStream = spriteData.img                            // оптимизируем и запишем картинку спрайта
     .pipe(buffer())
     .pipe(imagemin())
     .pipe(gulp.dest('build/img'));
-  let cssStream = spriteData.css
+  let cssStream = spriteData.css                            // запишем генерируемый стилевой файл спрайта
     .pipe(gulp.dest(dirs.source + '/scss/'));
   return merge(imgStream, cssStream);
 });
@@ -162,19 +160,19 @@ gulp.task('clean', function () {
 // ЗАДАЧА: Конкатенация и углификация Javascript
 gulp.task('js', function () {
   return gulp.src([
-      // список обрабатываемых файлов
+      // список обрабатываемых файлов в указанной последовательности
+      // добавьте сюда пути к JS-файлам, которые нужно взять в обработку
       dirs.source + '/js/jquery-3.1.0.min.js',
       dirs.source + '/js/jquery-migrate-1.4.1.min.js',
-      dirs.source + '/js/owl.carousel.min.js',
       dirs.source + '/js/script.js',
     ])
-    .pipe(plumber({ errorHandler: onError }))
-    .pipe(concat('script.min.js'))
-    .pipe(uglify())
-    .pipe(gulp.dest(dirs.build + '/js'));
+    .pipe(plumber({ errorHandler: onError }))             // не останавливаем автоматику при ошибках
+    .pipe(concat('script.min.js'))                        // конкатенируем все файлы в один с указанным именем
+    .pipe(uglify())                                       // сжимаем
+    .pipe(gulp.dest(dirs.build + '/js'));                 // записываем
 });
 
-// ЗАДАЧА: Сборка всего
+// ЗАДАЧА: Сборка всего (последовательность выполнения задач)
 gulp.task('build', gulp.series(
   'clean',
   'svgstore',

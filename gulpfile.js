@@ -87,6 +87,18 @@ gulp.task('img', function () {
     .pipe(gulp.dest(dirs.build + '/img'));                  // записываем файлы
 });
 
+// ЗАДАЧА: Копирование шрифтов
+gulp.task('fonts', function () {
+  return gulp.src([
+        dirs.source + '/fonts/*.{ttf,woff,woff2,eot,svg}',
+      ],
+      {since: gulp.lastRun('fonts')}
+    )
+    .pipe(plumber({ errorHandler: onError }))
+    .pipe(newer(dirs.build + '/fonts'))
+    .pipe(gulp.dest(dirs.build + '/fonts'));
+});
+
 // ЗАДАЧА ЗАПУСКАЕТСЯ ТОЛЬКО ВРУЧНУЮ: Оптимизация изображений
 gulp.task('img:opt', function () {
   return gulp.src([
@@ -177,7 +189,7 @@ gulp.task('build', gulp.series(
   'clean',
   'svgstore',
   'png:sprite',
-  gulp.parallel('style', 'img', 'js'),
+  gulp.parallel('style', 'img', 'js', 'fonts'),
   'pug',
   'html'
 ));

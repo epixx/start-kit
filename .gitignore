@@ -18,3 +18,4 @@ node_modules/
 .publish
 ex_files
 Thumbs.db
+__MACOSX/

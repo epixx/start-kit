@@ -149,33 +149,33 @@ gulp.task('img:opt', function (callback) {
 // Сборка SVG-спрайта
 let spriteSvgPath = dirs.source + '/blocks/sprite-svg/svg/';
 gulp.task('sprite:svg', function (callback) {
-    if(fileExist(spriteSvgPath) !== false) {
-      return gulp.src(spriteSvgPath + '*.svg')
-        .pipe(svgmin(function (file) {
-          return {
-            plugins: [{
-              cleanupIDs: {
-                minify: true
-              }
-            }]
-          }
-        }))
-        .pipe(svgstore({ inlineSvg: true }))
-        .pipe(cheerio({
-          run: function($) {
-            $('svg').attr('style',  'display:none');
-          },
-          parserOptions: {
-            xmlMode: true
-          }
-        }))
-        .pipe(rename('sprite-svg.svg'))
-        .pipe(gulp.dest(dirs.source + '/blocks/sprite-svg/img/'));
-    }
-    else {
-      console.log('SVG-спрайт: нет папки ' + spriteSvgPath);
-      callback();
-    }
+  if(fileExist(spriteSvgPath) !== false) {
+    return gulp.src(spriteSvgPath + '*.svg')
+      .pipe(svgmin(function (file) {
+        return {
+          plugins: [{
+            cleanupIDs: {
+              minify: true
+            }
+          }]
+        }
+      }))
+      .pipe(svgstore({ inlineSvg: true }))
+      .pipe(cheerio({
+        run: function($) {
+          $('svg').attr('style',  'display:none');
+        },
+        parserOptions: {
+          xmlMode: true
+        }
+      }))
+      .pipe(rename('sprite-svg.svg'))
+      .pipe(gulp.dest(dirs.source + '/blocks/sprite-svg/img/'));
+  }
+  else {
+    console.log('SVG-спрайт: нет папки ' + spriteSvgPath);
+    callback();
+  }
 });
 
 // Сборка PNG-спрайта
@@ -306,8 +306,8 @@ function fileExist(path) {
 }
 
 var onError = function(err) {
-    notify.onError({
-      title: 'Error in ' + err.plugin,
-    })(err);
-    this.emit('end');
+  notify.onError({
+    title: 'Error in ' + err.plugin,
+  })(err);
+  this.emit('end');
 };

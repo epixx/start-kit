@@ -1,5 +1,7 @@
+svg4everybody(); // иницализация полифила для IE
+
 $(document).ready(function(){
-  // весь ваш код
+  // весь ваш код c jQuery
 });
 
 // Если на проекте нет jQuery, но хочется $( document ).ready... (IE9+)

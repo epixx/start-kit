@@ -8,6 +8,7 @@ const dirs = {
 
 // Определим необходимые инструменты
 const gulp = require('gulp');
+const gulpSequence = require('gulp-sequence');
 const rename = require('gulp-rename');
 const sass = require('gulp-sass');
 const sourcemaps = require('gulp-sourcemaps');
@@ -48,6 +49,23 @@ let postCssPlugins = [
   objectFitImages(),                                       // возможность применять object-fit
 ];
 
+// Изображения, которые нужно копировать
+let images = [
+  dirs.source + '/img/*.{gif,png,jpg,jpeg,svg,ico}',
+  dirs.source + '/blocks/**/img/*.{gif,png,jpg,jpeg,svg}',
+  '!' + dirs.source + '/blocks/sprite-png/png/*',
+  '!' + dirs.source + '/blocks/sprite-svg/svg/*',
+];
+
+// Cписок обрабатываемых файлов в указанной последовательности
+let jsList = [
+  './node_modules/jquery/dist/jquery.min.js',
+  './node_modules/jquery-migrate/dist/jquery-migrate.min.js',
+  './node_modules/svg4everybody/dist/svg4everybody.js',
+  './node_modules/object-fit-images/dist/ofi.js',
+  dirs.source + '/js/script.js',
+];
+
 // Компиляция и обработка стилей
 gulp.task('style', function () {
   return gulp.src(dirs.source + '/scss/style.scss')        // какой файл компилировать
@@ -72,133 +90,150 @@ gulp.task('style', function () {
     .pipe(gulp.dest(dirs.build + '/css/'));                // записываем CSS-файл
 });
 
-// ЗАДАЧА: Сборка pug
-// gulp.task('pug', function() {
-//   return gulp.src(dirs.source + '/**/*.pug')
-//     .pipe(plumber({ errorHandler: onError }))
-//     .pipe(pug())
-//     .pipe(gulp.dest(dirs.build));
-// });
+// Копирование и обработка HTML (ВНИМАНИЕ: при совпадении имён Pug приоритетнее!)
+gulp.task('html', function() {
+  return gulp.src(dirs.source + '/*.html')
+    .pipe(replace(/\n\s*<!--DEV[\s\S]+?-->/gm, ''))        // Убираем комменты для разработчиков
+    .pipe(gulp.dest(dirs.build));
+});
 
-// ЗАДАЧА: Копирование изображений
-// gulp.task('img', function () {
-//   return gulp.src([
-//         dirs.source + '/img/*.{gif,png,jpg,jpeg,svg}',      // какие файлы обрабатывать
-//       ],
-//       {since: gulp.lastRun('img')}                          // оставим в потоке обработки только изменившиеся от последнего запуска задачи (в этой сессии) файлы
-//     )
-//     .pipe(plumber({ errorHandler: onError }))
-//     .pipe(newer(dirs.build + '/img'))                       // оставить в потоке только новые файлы (сравниваем с содержимым соотв. подпапки билда)
-//     .pipe(gulp.dest(dirs.build + '/img'));                  // записываем файлы
-// });
+// Компиляция pug
+gulp.task('pug', function() {
+  return gulp.src(dirs.source + '/*.pug')                  // какие файлы компилировать
+    .pipe(plumber({ errorHandler: onError }))              // при ошибках не останавливаем автоматику сборки
+    .pipe(pug())                                           // компилируем
+    .pipe(gulp.dest(dirs.build));                          // записываем результат
+});
 
-// ЗАДАЧА: Копирование шрифтов
-// gulp.task('fonts', function () {
-//   return gulp.src([
-//         dirs.source + '/fonts/*.{ttf,woff,woff2,eot,svg}',
-//       ],
-//       {since: gulp.lastRun('fonts')}
-//     )
-//     .pipe(plumber({ errorHandler: onError }))
-//     .pipe(newer(dirs.build + '/fonts'))
-//     .pipe(gulp.dest(dirs.build + '/fonts'));
-// });
+// Копирование изображений
+gulp.task('copy:img', function () {
+  if(images.length) {
+    return gulp.src(images)
+      // .pipe(newer(dirs.build + '/img')) // потенциально опасно, к сожалению
+      .pipe(rename({dirname: ''}))
+      .pipe(gulp.dest(dirs.build + '/img'));
+  }
+  else {
+    console.log('Изображения не обрабатываются.');
+    callback();
+  }
+});
 
-// ЗАДАЧА ЗАПУСКАЕТСЯ ТОЛЬКО ВРУЧНУЮ: Оптимизация изображений
-// gulp.task('img:opt', function () {
-//   return gulp.src([
-//       dirs.source + '/img/*.{gif,png,jpg,jpeg,svg}',        // какие файлы обрабатывать
-//       '!' + dirs.source + '/img/sprite-svg.svg',            // SVG-спрайт брать в обработку не будем
-//     ])
-//     .pipe(plumber({ errorHandler: onError }))
-//     .pipe(imagemin({                                        // оптимизируем
-//       progressive: true,
-//       svgoPlugins: [{removeViewBox: false}],
-//       use: [pngquant()]
-//     }))
-//     .pipe(gulp.dest(dirs.source + '/img'));                  // записываем файлы В ИСХОДНУЮ ПАПКУ
-// });
+// Копирование шрифтов
+gulp.task('copy:fonts', function () {
+  return gulp.src([
+      dirs.source + '/fonts/*.{ttf,woff,woff2,eot,svg}',
+    ])
+    .pipe(gulp.dest(dirs.build + '/fonts'));
+});
 
-// ЗАДАЧА: Сборка SVG-спрайта
-// gulp.task('svgstore', function (callback) {
-//   let spritePath = dirs.source + '/img/svg-sprite';          // константа с путем к исходникам SVG-спрайта
-//   if(fileExist(spritePath) !== false) {
-//     return gulp.src(spritePath + '/*.svg')                   // берем только SVG файлы из этой папки, подпапки игнорируем
-//       .pipe(svgmin(function (file) {                         // оптимизируем SVG, поступивший на вход
-//         return {
-//           plugins: [{
-//             cleanupIDs: {
-//               minify: true
-//             }
-//           }]
-//         }
-//       }))
-//       .pipe(svgstore({ inlineSvg: true }))                   // шьем спрайт
-//       .pipe(cheerio(function ($) {                           // дописываем получающемуся SVG-спрайту инлайновое сокрытие
-//         $('svg').attr('style',  'display:none');
-//       }))
-//       .pipe(rename('sprite-svg.svg'))                        // именуем результат
-//       .pipe(gulp.dest(dirs.source + '/img'));                // записываем результат В ПАПКУ ИСХОДНИКОВ (он оттуда будет скопирован в папку билда как и все прочие картинки)
-//   }
-//   else {
-//     console.log('Нет файлов для сборки SVG-спрайта');
-//     callback();
-//   }
-// });
+// Ручная оптимизация изображений
+// Использование: folder=src/img npm start img:opt
+const folder = process.env.folder;
+gulp.task('img:opt', function (callback) {
+  if(folder){
+    return gulp.src(folder + '/*.{jpg,jpeg,gif,png,svg}')
+      .pipe(imagemin({
+        progressive: true,
+        svgoPlugins: [{removeViewBox: false}],
+        use: [pngquant()]
+      }))
+      .pipe(gulp.dest(folder));
+  }
+  else {
+    console.log('Не указана папка с картинками. Пример вызова команды: folder=src/blocks/test-block/img npm start img:opt');
+    callback();
+  }
+});
 
-// ЗАДАЧА: сшивка PNG-спрайта
-// gulp.task('png:sprite', function () {
-//   let fileName = 'sprite-' + Math.random().toString().replace(/[^0-9]/g, '') + '.png'; // формируем случайное и уникальное имя файла
-//   let spriteData = gulp.src('src/img/png-sprite/*.png')     // получаем список файлов для создания спрайта
-//     .pipe(plumber({ errorHandler: onError }))               // не останавливаем автоматику при ошибках
-//     .pipe(spritesmith({                                     // шьем спрайт:
-//       imgName: fileName,                                    //   - имя файла (сформировано чуть выше)
-//       cssName: 'sprite.scss',                               //   - имя генерируемого стилевого файла (там примеси для комфортного использования частей спрайта)
-//       padding: 4,                                           //   - отступ между составными частями спрайта
-//       imgPath: '../img/' + fileName                         //   - путь к файлу картинки спрайта (используеися в генерируемом стилевом файле спрайта)
-//     }));
-//   let imgStream = spriteData.img                            // оптимизируем и запишем картинку спрайта
-//     .pipe(buffer())
-//     .pipe(imagemin())
-//     .pipe(gulp.dest('build/img'));
-//   let cssStream = spriteData.css                            // запишем генерируемый стилевой файл спрайта
-//     .pipe(gulp.dest(dirs.source + '/scss/'));
-//   return merge(imgStream, cssStream);
-// });
+// Сборка SVG-спрайта
+let spriteSvgPath = dirs.source + '/blocks/sprite-svg/svg/';
+gulp.task('sprite:svg', function (callback) {
+    if(fileExist(spriteSvgPath) !== false) {
+      return gulp.src(spriteSvgPath + '*.svg')
+        .pipe(svgmin(function (file) {
+          return {
+            plugins: [{
+              cleanupIDs: {
+                minify: true
+              }
+            }]
+          }
+        }))
+        .pipe(svgstore({ inlineSvg: true }))
+        .pipe(cheerio({
+          run: function($) {
+            $('svg').attr('style',  'display:none');
+          },
+          parserOptions: {
+            xmlMode: true
+          }
+        }))
+        .pipe(rename('sprite-svg.svg'))
+        .pipe(gulp.dest(dirs.source + '/blocks/sprite-svg/img/'));
+    }
+    else {
+      console.log('SVG-спрайт: нет папки ' + spriteSvgPath);
+      callback();
+    }
+});
 
-// ЗАДАЧА: Очистка папки сборки
+// Сборка PNG-спрайта
+let spritePngPath = dirs.source + '/blocks/sprite-png/png/';
+gulp.task('sprite:png', function () {
+  let fileName = 'sprite-' + Math.random().toString().replace(/[^0-9]/g, '') + '.png';
+  let spriteData = gulp.src(spritePngPath + '*.png')
+    .pipe(plumber({ errorHandler: onError }))
+    .pipe(spritesmith({
+      imgName: fileName,
+      cssName: 'sprite-png.scss',
+      padding: 4,
+      imgPath: '../img/' + fileName
+    }));
+  let imgStream = spriteData.img
+    .pipe(buffer())
+    .pipe(imagemin())
+    .pipe(gulp.dest(dirs.source + '/blocks/sprite-png/img/'));
+  let cssStream = spriteData.css
+    .pipe(gulp.dest(dirs.source + '/blocks/sprite-png/'));
+  return merge(imgStream, cssStream);
+});
+
+// Очистка перед сборкой
 gulp.task('clean', function () {
-  return del([                                              // стираем
-    dirs.build + '/**/*',                                   // все файлы из папки сборки (путь из константы)
-    '!' + dirs.build + '/readme.md'                         // кроме readme.md (путь из константы)
+  return del([
+    dirs.build + '/**/*',
+    '!' + dirs.build + '/readme.md',
+    dirs.source + '/blocks/sprite-png/img',
   ]);
 });
 
-// ЗАДАЧА: Конкатенация и углификация Javascript
-// gulp.task('js', function () {
-//   return gulp.src([
-//       // список обрабатываемых файлов в указанной последовательности
-//       // добавьте сюда пути к JS-файлам, которые нужно взять в обработку
-//       "./node_modules/jquery/dist/jquery.min.js",
-//       "./node_modules/jquery-migrate/dist/jquery-migrate.min.js",
-//       "./node_modules/svg4everybody/dist/svg4everybody.js",
-//       "./node_modules/object-fit-images/dist/ofi.js",
-//     ])
-//     .pipe(plumber({ errorHandler: onError }))             // не останавливаем автоматику при ошибках
-//     .pipe(concat('script.min.js'))                        // конкатенируем все файлы в один с указанным именем
-//     .pipe(uglify())                                       // сжимаем
-//     .pipe(gulp.dest(dirs.build + '/js'));                 // записываем
-// });
+// Конкатенация и углификация Javascript
+gulp.task('js', function () {
+  if(jsList.length) {
+    return gulp.src(jsList)
+      .pipe(plumber({ errorHandler: onError }))             // не останавливаем автоматику при ошибках
+      .pipe(concat('script.min.js'))                        // конкатенируем все файлы в один с указанным именем
+      .pipe(uglify())                                       // сжимаем
+      .pipe(gulp.dest(dirs.build + '/js'));                 // записываем
+  }
+  else {
+    console.log('Javascript не обрабатывается');
+    callback();
+  }
+});
 
-// ЗАДАЧА: Сборка всего (последовательность выполнения задач)
-// gulp.task('build', gulp.series(
-//   'clean',
-//   'svgstore',
-//   'png:sprite',
-//   gulp.parallel('style', 'img', 'js', 'fonts'),
-//   'pug',
-//   'html'
-// ));
+// Сборка всего
+gulp.task('build', function (callback) {
+  gulpSequence(
+    'clean',
+    ['sprite:svg', 'sprite:png'],
+    ['style', 'js', 'copy:img', 'copy:fonts'],
+    'html',
+    'pug',
+    callback
+  );
+});
 
 // Задача по умолчанию
 gulp.task('default', ['serve']);
@@ -206,7 +241,7 @@ gulp.task('default', ['serve']);
 // Локальный сервер, слежение
 gulp.task('serve', ['build'], function() {
   browserSync.init({
-    server: dirs.buildPath,
+    server: dirs.build,
     startPath: 'index.html',
     open: false,
     port: 8080,
@@ -215,56 +250,44 @@ gulp.task('serve', ['build'], function() {
   gulp.watch([
     dirs.source + '/scss/style.scss'
   ], ['style']);
-  // // Слежение за отдельными стилями
-  // gulp.watch(projectConfig.singleCompiled, ['style:single',]);
-  // // Слежение за добавочными стилями
-  // if(projectConfig.copiedCss.length) {
-  //   gulp.watch(projectConfig.copiedCss, ['copy:css']);
-  // }
-  // // Слежение за изображениями
-  // if(lists.img.length) {
-  //   gulp.watch(lists.img, ['watch:img']);
-  // }
-  // // Слежение за добавочными JS
-  // if(projectConfig.copiedJs.length) {
-  //   gulp.watch(projectConfig.copiedJs, ['watch:copied:js']);
-  // }
-  // // Слежение за шрифтами
-  // gulp.watch('/fonts/*.{ttf,woff,woff2,eot,svg}', {cwd: dirs.srcPath}, ['watch:fonts']);
-  // // Слежение за html
-  // gulp.watch([
-  //   '*.html',
-  //   '_include/*.html',
-  //   dirs.blocksDirName + '/**/*.html'
-  // ], {cwd: dirs.srcPath}, ['watch:html']);
-  // // Слежение за JS
-  // if(lists.js.length) {
-  //   gulp.watch(lists.js, ['watch:js']);
-  // }
-  // // Слежение за SVG (спрайты)
-  // if((projectConfig.blocks['sprite-svg']) !== undefined) {
-  //   gulp.watch('*.svg', {cwd: spriteSvgPath}, ['watch:sprite:svg']); // следит за новыми и удаляемыми файлами
-  // }
-  // // Слежение за PNG (спрайты)
-  // if((projectConfig.blocks['sprite-png']) !== undefined) {
-  //   gulp.watch('*.png', {cwd: spritePngPath}, ['watch:sprite:png']); // следит за новыми и удаляемыми файлами
-  // }
+  // Слежение за html
+  gulp.watch([
+    dirs.source + '/*.html',
+  ], ['watch:html']);
+  // Слежение за pug
+  gulp.watch([
+    dirs.source + '/**/*.pug'
+  ], ['watch:pug']);
+  // Слежение за изображениями
+  if(images.length) {
+    gulp.watch(images, ['watch:img']);
+  }
+  // Слежение за шрифтами
+  gulp.watch(dirs.source + '/fonts/*.{ttf,woff,woff2,eot,svg}', ['watch:fonts']);
+  // Слежение за SVG (спрайты)
+  gulp.watch('*.svg', {cwd: spriteSvgPath}, ['watch:sprite:svg']);
+  // Слежение за PNG (спрайты)
+  gulp.watch(spritePngPath + '*.png', {cwd: spritePngPath}, ['watch:sprite:png']);
+  // Слежение за JS
+  if(jsList.length) {
+    gulp.watch(jsList, ['watch:js']);
+  }
 });
 
 // Браузерсинк с 3-м галпом — такой браузерсинк...
-// gulp.task('watch:img', ['copy:img'], reload);
-// gulp.task('watch:copied:js', ['copy:js'], reload);
-// gulp.task('watch:fonts', ['copy:fonts'], reload);
-// gulp.task('watch:html', ['html'], reload);
-// gulp.task('watch:js', ['js'], reload);
-// gulp.task('watch:sprite:svg', ['sprite:svg'], reload);
-// gulp.task('watch:sprite:png', ['sprite:png'], reload);
+gulp.task('watch:html', ['html'], reload);
+gulp.task('watch:pug', ['pug'], reload);
+gulp.task('watch:img', ['copy:img'], reload);
+gulp.task('watch:fonts', ['copy:fonts'], reload);
+gulp.task('watch:sprite:svg', ['sprite:svg'], reload);
+gulp.task('watch:sprite:png', ['sprite:png'], reload);
+gulp.task('watch:js', ['js'], reload);
 
-// ЗАДАЧА, ВЫПОЛНЯЕМАЯ ТОЛЬКО ВРУЧНУЮ: Отправка в GH pages (ветку gh-pages репозитория)
-// gulp.task('deploy', function() {
-//   return gulp.src('./build/**/*')
-//     .pipe(ghPages());
-// });
+// Отправка в GH pages (ветку gh-pages репозитория)
+gulp.task('deploy', function() {
+  return gulp.src(dirs.build + '/**/*')
+    .pipe(ghPages());
+});
 
 // Перезагрузка браузера
 function reload (done) {
@@ -284,7 +307,7 @@ function fileExist(path) {
 
 var onError = function(err) {
     notify.onError({
-      title: "Error in " + err.plugin,
+      title: 'Error in ' + err.plugin,
     })(err);
     this.emit('end');
 };

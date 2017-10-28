@@ -2,13 +2,16 @@
 
 // Глобальные подключения
 @import 'variables.scss';
-@import 'global.scss';
 @import 'fonts.scss';
+@import 'global.scss';
 
-// Это импорт файла с примесями для растровых спрайтов. Используете растровые спрайты — раскомментить,
-// посмотреть контент. Найти примеси, выводящие свойства спрайтов и вызвать эти примеси в нужных вам
-// местах. При «тупом» использовании — вызвать примесь, генерирующую все css-правила спрайта.
-// @import 'sprite.scss';
+// Растровый спрайт: примеси-генераторы правил
+@import '../blocks/sprite-png/sprite-png.scss';
+@include sprites($spritesheet-sprites); // Генератор селекторов для всех картинок
 
 // БЭМ-блоки. Один БЭМ-блок = 1 файл. ВСЕГДА.
-@import 'blocks/page-header.scss';
+// @import 'blocks/page-header.scss';
+
+body {
+  // display: none;
+}

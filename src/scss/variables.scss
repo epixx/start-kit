@@ -1,10 +1,14 @@
+$gray-dark:                   hsl(0, 0%, 20%);
+$gray:                        hsl(0, 0%, 50%);
+$gray-light:                  hsl(0, 0%, 80%);
+
+$text-color:                  $gray-dark;
+
+$font-family:                 'Open Sans_my', sans-serif;
+$font-size:                   14px;
+
 $screen-xs:                   480px;
 $screen-sm:                   768px;
 $screen-md:                   992px;
 $screen-lg:                   1200px;
 $screen-xl:                   1920px;
-
-$text-color:                  #000;
-
-$font-family:                 'Open Sans_my', sans-serif;
-$font-size:                   14px;

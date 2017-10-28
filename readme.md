@@ -1,4 +1,4 @@
-# EpicSkills start kit
+# EpicSkills start kit [![devDependencies Status](https://david-dm.org/epixx/start-kit/dev-status.svg)](https://david-dm.org/epixx/start-kit?type=dev) [![dependencies Status](https://david-dm.org/epixx/start-kit/status.svg)](https://david-dm.org/epixx/start-kit)
 
 Стартовый репозиторий.
 
@@ -21,9 +21,7 @@
 - [Шпаргалка по консольным командам Git](https://github.com/nicothin/web-development/tree/master/git)
 - [Шпаргалка ниндзя Sublime Text 3](http://nicothin.github.io/sublime-text/sublime-text-3-hotkeys.html)
 - [Sublime Text 3 для работы с фронтэндом](https://github.com/nicothin/sublime-text)
-- [Шпаргалка по Atom](https://nicothin.github.io/Atom/Atom-hotkeys.html)
-- [Gulp для самых маленьких](https://www.youtube.com/watch?v=vW51JUVT66w) (видео)
-- [Скринкаст по Gulp](https://www.youtube.com/playlist?list=PLDyvV36pndZFLTE13V4qNWTZbeipNhCgQ) (серия видео)
+
 
 
 ## Как стянуть из этого (мастер) репозитория какие-то дополнения в свой форк-репозиторий
@@ -34,9 +32,10 @@
 
 ``` bash
 # указана последовательность действий:
-git remote add upstream git@github.com:epixx/start-kit.git # добавляем удаленный репозиторий: сокр. имя — upstream, URL этого репозитория
-git fetch upstream # качаем все ветки мастер-репозитория, но пока не сливаем со своими
-git checkout master # переключаемся на ветку master своего репозитория
-git merge upstream/master # вливаем ветку master удалённого репозитория upstream в свою ветку master
-npm i # доустанавливаем зависимости проекта, если они изменились
+git remote -v # убедитесь, что origin — это ВАШ репозиторий
+git remote add upstream git@github.com:epixx/start-kit.git # добавьте удаленный репозиторий с сокр. именем upstream
+git fetch upstream # стяните все ветки мастер-репозитория (пока без слияния со своими)
+git checkout master # переключитесь на ветку master своего репозитория (если были в другой ветке)
+git merge upstream/master # влейте ветку master удалённого репозитория upstream в свою ветку master
+npm i # доустановите зависимости проекта (могли измениться)
 ```

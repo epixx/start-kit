@@ -100,11 +100,14 @@ gulp.task('html', function() {
 
 // Компиляция pug
 gulp.task('pug', function() {
-  return gulp.src(dirs.source + '/*.pug')                  // какие файлы компилировать
-    .pipe(plumber({ errorHandler: onError }))              // при ошибках не останавливаем автоматику сборки
-    .pipe(pug())                                           // компилируем
-    .pipe(htmlbeautify())                                  // форматируем кодэ
-    .pipe(gulp.dest(dirs.build));                          // записываем результат
+  return gulp.src([
+    dirs.source + '/*.pug',
+    '!' + dirs.source + '/mixins.pug',
+    ])
+    .pipe(plumber())
+    .pipe(pug())
+    .pipe(htmlbeautify())
+    .pipe(gulp.dest(dirs.build));
 });
 
 // Копирование изображений
@@ -250,7 +253,8 @@ gulp.task('serve', ['build'], function() {
   });
   // Слежение за стилями
   gulp.watch([
-    dirs.source + '/scss/style.scss'
+    dirs.source + '/scss/style.scss',
+    dirs.source + '/blocks/**/*.scss',
   ], ['style']);
   // Слежение за html
   gulp.watch([
@@ -258,7 +262,7 @@ gulp.task('serve', ['build'], function() {
   ], ['watch:html']);
   // Слежение за pug
   gulp.watch([
-    dirs.source + '/**/*.pug'
+    dirs.source + '/**/*.pug',
   ], ['watch:pug']);
   // Слежение за изображениями
   if(images.length) {

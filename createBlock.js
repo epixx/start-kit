@@ -9,6 +9,7 @@ let blockName = process.argv[2];          // получим имя блока
 let defaultExtensions = ['scss', 'pug', 'img']; // расширения по умолчанию
 let extensions = uniqueArray(defaultExtensions.concat(process.argv.slice(3)));  // добавим введенные при вызове расширения (если есть)
 let styleManagerPath = './src/scss/style.scss';
+let pugMixinsPath = './src/mixins.pug';
 
 // Если есть имя блока
 if(blockName) {
@@ -69,7 +70,7 @@ if(blockName) {
                 // Запишем в конец файла
                 fs.write(fileHandle, styleFileImport + '\n', null, 'utf8', function(err, written) {
                   if (!err) {
-                    console.log(`В диспетчер подключений (${styleManagerPath}) записано: ${styleFileImport}`);
+                    console.log(`В ${styleManagerPath} записано: ${styleFileImport}`);
                   } else {
                     console.log(`ОШИБКА записи в ${styleManagerPath}: ${err}`);
                   }
@@ -80,7 +81,7 @@ if(blockName) {
             });
           }
           else {
-            console.log(`Импорт НЕ прописан в ${styleManagerPath} (он там уже есть)`);
+            console.log(`Импорт стилевого файла НЕ прописан в ${styleManagerPath} (он там уже есть)`);
           }
         }
 
@@ -91,7 +92,55 @@ if(blockName) {
 
         // Если это Pug
         else if(extention == 'pug') {
-          fileContent = `mixin ${blockName}()\n`;
+          fileContent = `mixin ${blockName}()\n  div text\n`;
+
+          let includeMixin = 'include blocks/' + blockName + '/' + blockName + '.pug';
+
+          // Читаем файл диспетчера подключений
+          let connectManager = fs.readFileSync(pugMixinsPath, 'utf8');
+
+          // Делаем из строк массив, фильтруем массив, оставляя только строки с незакомментированными импортами
+          let fileSystem = connectManager.split('\n').filter(function(item) {
+            if(/^(\s*)include/.test(item)) return true;
+            else return false;
+          });
+
+          // Создаем регулярку с импортом
+          let reg = new RegExp(includeMixin, '');
+
+          // Создадим флаг отсутствия блока среди импортов
+          let impotrtExist = false;
+
+          // Обойдём массив и проверим наличие импорта
+          for (var i = 0, j=fileSystem.length; i < j; i++) {
+            if(reg.test(fileSystem[i])) {
+              impotrtExist = true;
+              break;
+            }
+          }
+
+          // Если флаг наличия импорта по-прежнему опущен, допишем импорт
+          if(!impotrtExist) {
+            // Открываем файл
+            fs.open(pugMixinsPath, 'a', function(err, fileHandle) {
+              // Если ошибок открытия нет...
+              if (!err) {
+                // Запишем в конец файла
+                fs.write(fileHandle, includeMixin + '\n', null, 'utf8', function(err, written) {
+                  if (!err) {
+                    console.log(`В ${pugMixinsPath} записано: ${includeMixin}`);
+                  } else {
+                    console.log(`ОШИБКА записи в ${pugMixinsPath}: ${err}`);
+                  }
+                });
+              } else {
+                console.log(`ОШИБКА открытия ${pugMixinsPath}: ${err}`);
+              }
+            });
+          }
+          else {
+            console.log(`Инклуд примеси НЕ прописан в ${pugMixinsPath} (он там уже есть)`);
+          }
         }
 
         // Если нужна подпапка для картинок

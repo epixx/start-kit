@@ -3,11 +3,12 @@
 // Глобальные подключения
 @import 'variables.scss';
 @import 'fonts.scss';
-@import 'global.scss';
 
 // Растровый спрайт: примеси-генераторы правил
 @import './src/blocks/sprite-png/sprite-png.scss';
-// @include sprites($spritesheet-sprites); // Генератор селекторов для всех картинок
+@include sprites($spritesheet-sprites); // Генератор селекторов для всех картинок спрайта
 
 // БЭМ-блоки. Один БЭМ-блок = 1 файл. ВСЕГДА.
-@import './src/blocks/test-block/test-block.scss';
+@import './src/blocks/page/page.scss';
+@import './src/blocks/TEST/TEST.scss';
+@import './src/blocks/TEST2/TEST2.scss';

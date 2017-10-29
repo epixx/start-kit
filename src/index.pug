@@ -1,24 +1,26 @@
-doctype html
-html.no-js
-  head
-    title test
-    link(rel="shortcut icon", href="/img/favicon.ico", type="image/x-icon")
-    link(rel="stylesheet", href="css/style.css")
-    script.
-      document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+extends templates/layout-home.pug
 
-  body
-    .test-block Тестовый блок
-    .foo спрайты:
-      .chrome
-      .github-logo
-      .placeholder
-      hr
-      svg(width="24", height="24")
-        use(xlink:href="img/sprite-svg.svg#loupe")
-      svg(width="24", height="24")
-        use(xlink:href="img/sprite-svg.svg#rgb")
-      svg(width="24", height="24")
-        use(xlink:href="img/sprite-svg.svg#tea-cup")
+block meta
+  title Home
+  meta(name='description', content='Home page!')
 
-    script(src="js/script.min.js")
+//- block append head
+//-   link(rel="stylesheet", href="some.css")
+//-   script(src='some.js')
+
+block content
+  p Растровые спрайты:
+    span.chrome(style="display: inline-block;")
+    span.github-logo(style="display: inline-block;")
+    span.placeholder(style="display: inline-block;")
+  hr
+  p Векторные спрайты
+    svg(width="24", height="24")
+      use(xlink:href="img/sprite-svg.svg#loupe")
+    svg(width="24", height="24")
+      use(xlink:href="img/sprite-svg.svg#rgb")
+    svg(width="24", height="24")
+      use(xlink:href="img/sprite-svg.svg#tea-cup")
+
+//- block append page-bottom
+//-   script(src='some.js')

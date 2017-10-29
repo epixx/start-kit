@@ -37,6 +37,7 @@ const spritesmith = require('gulp.spritesmith');
 const buffer = require('vinyl-buffer');
 const merge = require('merge-stream');
 const wait = require('gulp-wait');
+const htmlbeautify = require('gulp-html-beautify');
 
 // Перечисление и настройки плагинов postCSS, которыми обрабатываются стилевые файлы
 let postCssPlugins = [
@@ -102,6 +103,7 @@ gulp.task('pug', function() {
   return gulp.src(dirs.source + '/*.pug')                  // какие файлы компилировать
     .pipe(plumber({ errorHandler: onError }))              // при ошибках не останавливаем автоматику сборки
     .pipe(pug())                                           // компилируем
+    .pipe(htmlbeautify())                                  // форматируем кодэ
     .pipe(gulp.dest(dirs.build));                          // записываем результат
 });
 

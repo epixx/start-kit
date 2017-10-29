@@ -6,12 +6,8 @@
 @import 'global.scss';
 
 // Растровый спрайт: примеси-генераторы правил
-@import '../blocks/sprite-png/sprite-png.scss';
-@include sprites($spritesheet-sprites); // Генератор селекторов для всех картинок
+@import './src/blocks/sprite-png/sprite-png.scss';
+// @include sprites($spritesheet-sprites); // Генератор селекторов для всех картинок
 
 // БЭМ-блоки. Один БЭМ-блок = 1 файл. ВСЕГДА.
-// @import 'blocks/page-header.scss';
-
-body {
-  // display: none;
-}
+@import './src/blocks/test-block/test-block.scss';

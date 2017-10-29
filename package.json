@@ -42,6 +42,7 @@
     "gulp.spritesmith": "^6.3.0",
     "imagemin-pngquant": "^5.0.0",
     "merge-stream": "^1.0.1",
+    "mkdirp": "^0.5.1",
     "object-fit-images": "^3.2.3",
     "postcss-object-fit-images": "^1.1.2",
     "ttf2woff": "^2.0.1",

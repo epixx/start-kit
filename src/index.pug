@@ -8,6 +8,10 @@ block meta
 //-   link(rel="stylesheet", href="some.css")
 //-   script(src='some.js')
 
+block nav
+  -var selected = 'blog';
+  +main-nav(selected)
+
 block content
   p Растровые спрайты:
     span.chrome(style="display: inline-block;")

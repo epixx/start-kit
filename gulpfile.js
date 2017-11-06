@@ -101,8 +101,8 @@ gulp.task('html', function() {
 // Компиляция pug
 gulp.task('pug', function() {
   return gulp.src([
-    dirs.source + '/*.pug',
-    '!' + dirs.source + '/mixins.pug',
+      dirs.source + '/*.pug',
+      '!' + dirs.source + '/mixins.pug',
     ])
     .pipe(plumber())
     .pipe(pug())

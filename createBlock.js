@@ -92,7 +92,7 @@ if(blockName) {
 
         // Если это Pug
         else if(extention == 'pug') {
-          fileContent = `mixin ${blockName}()\n  div text\n`;
+          fileContent = `mixin ${blockName}()\n  div ${blockName}\n`;
 
           let includeMixin = 'include blocks/' + blockName + '/' + blockName + '.pug';
 

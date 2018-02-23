@@ -13,7 +13,7 @@
     "url": "https://github.com/epixx/start-kit"
   },
   "devDependencies": {
-    "autoprefixer": "^7.1.6",
+    "autoprefixer": "^8.0.0",
     "browser-sync": "^2.14.0",
     "css-mqpacker": "^6.0.1",
     "del": "^3.0.0",

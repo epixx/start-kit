@@ -101,8 +101,8 @@ gulp.task('html', function() {
 // Компиляция pug
 gulp.task('pug', function() {
   return gulp.src([
-    dirs.source + '/*.pug',
-    '!' + dirs.source + '/mixins.pug',
+      dirs.source + '/*.pug',
+      '!' + dirs.source + '/mixins.pug',
     ])
     .pipe(plumber())
     .pipe(pug())
@@ -254,6 +254,7 @@ gulp.task('serve', ['build'], function() {
   // Слежение за стилями
   gulp.watch([
     dirs.source + '/scss/style.scss',
+    dirs.source + '/scss/variables.scss',
     dirs.source + '/blocks/**/*.scss',
   ], ['style']);
   // Слежение за html

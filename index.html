@@ -1,2 +1,49 @@
-<!DOCTYPE html><html class="no-js"><head><title>test</title><link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon"><link rel="stylesheet" href="css/style.css"><script>document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
-</script></head><body><div class="foo">спрайты:<div class="chrome"></div><div class="github-logo"></div><div class="kraken"></div><div class="male-and-female"></div><div class="musica-searcher"></div><div class="placeholder"></div><hr><svg width="24" height="24"><use xlink:href="img/sprite-svg.svg#loupe"></use></svg><svg width="24" height="24"><use xlink:href="img/sprite-svg.svg#rgb"></use></svg><svg width="24" height="24"><use xlink:href="img/sprite-svg.svg#tea-cup"></use></svg></div><script src="js/script.min.js"></script></body></html>
+<!DOCTYPE html>
+<html class="no-js  page" lang="ru">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Home</title>
+  <meta name="description" content="Home page!">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
+  <script>
+    document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+  </script>
+</head>
+
+<body>
+  <div class="page__inner">
+    <div class="page__content">
+      <div>Тут «шапка»
+        <nav class="main-nav">
+          <ul class="main-nav__list">
+            <li class="main-nav__item"><a href="/home" title="Home">Home</a></li>
+            <li class="main-nav__item  main-nav__item--active"><a href="/blog" title="Blog">Blog</a></li>
+            <li class="main-nav__item"><a href="/contact" title="Contact">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+      <p>Растровые спрайты:<span class="chrome" style="display: inline-block;"></span><span class="github-logo" style="display: inline-block;"></span><span class="placeholder" style="display: inline-block;"></span></p>
+      <hr>
+      <p>Векторные спрайты
+        <svg width="24" height="24">
+          <use xlink:href="img/sprite-svg.svg#loupe"></use>
+        </svg>
+        <svg width="24" height="24">
+          <use xlink:href="img/sprite-svg.svg#rgb"></use>
+        </svg>
+        <svg width="24" height="24">
+          <use xlink:href="img/sprite-svg.svg#tea-cup"></use>
+        </svg>
+      </p>
+    </div>
+    <div class="page__footer-wrapper">
+      <div>Тут «подвал»</div>
+    </div>
+  </div>
+  <script src="js/script.min.js"></script>
+</body>
+
+</html>

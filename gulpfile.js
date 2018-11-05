@@ -88,7 +88,7 @@ function serve() {
   watch([
     dir.src + 'scss/*.scss',
     dir.src + 'scss/blocks/*.scss',
-  ], { delay: 100 }, styles);
+  ], styles);
   watch(dir.src + '*.html', html);
   watch(dir.src + '*js/*.js', script);
   watch(dir.src + 'img/*.{jpg,jpeg,png,svg,webp,gif}', images);

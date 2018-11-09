@@ -13,7 +13,6 @@ const postcss = require('gulp-postcss');
 const autoprefixer = require('autoprefixer');
 const browserSync = require('browser-sync').create();
 const del = require('del');
-const gulp = require('gulp');
 const babel = require('gulp-babel');
 const uglify = require('gulp-uglify');
 const concat = require('gulp-concat');
@@ -40,30 +39,30 @@ function styles() {
 exports.styles = styles;
 
 function script() {
-  return gulp.src(dir.src + 'js/*.js')
+  return src(dir.src + 'js/*.js')
     .pipe(plumber())
     .pipe(babel({
         presets: ['@babel/env']
     }))
     .pipe(uglify())
     .pipe(concat('script.min.js'))
-    .pipe(gulp.dest(dir.build + 'js/'))
+    .pipe(dest(dir.build + 'js/'))
 }
 exports.script = script;
 
 function scriptsVendors() {
-  return gulp.src([
+  return src([
       'node_modules/jquery/dist/jquery.min.js',
       'node_modules/slick-carousel/slick/slick.min.js',
       'node_modules/svg4everybody/dist/svg4everybody.min.js'
     ])
     .pipe(concat('vendors.min.js'))
-    .pipe(gulp.dest(dir.build + 'js/'))
+    .pipe(dest(dir.build + 'js/'))
 }
 
 function images() {
-  return gulp.src(dir.src + 'img/*.{jpg,jpeg,png,svg,webp,gif}')
-    .pipe(gulp.dest(dir.build + 'img/'));
+  return src(dir.src + 'img/*.{jpg,jpeg,png,svg,webp,gif}')
+    .pipe(dest(dir.build + 'img/'));
 }
 exports.images = images;
 

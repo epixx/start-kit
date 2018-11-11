@@ -16,6 +16,8 @@ const del = require('del');
 const babel = require('gulp-babel');
 const uglify = require('gulp-uglify');
 const concat = require('gulp-concat');
+const ghPages = require('gh-pages');
+const path = require('path');
 
 function html() {
   return src(dir.src + '*.html')
@@ -76,6 +78,11 @@ function clean() {
   return del(dir.build)
 }
 exports.clean = clean;
+
+function deploy(cb) {
+  ghPages.publish(path.join(process.cwd(), './build'), cb);
+}
+exports.deploy = deploy;
 
 function serve() {
   browserSync.init({

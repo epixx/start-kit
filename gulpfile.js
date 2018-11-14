@@ -20,6 +20,9 @@ const ghPages = require('gh-pages');
 const path = require('path');
 const webp = require('gulp-webp');
 const webpHTML = require('gulp-webp-html');
+const svgstore = require("gulp-svgstore");
+const svgmin = require('gulp-svgmin');
+const rename = require("gulp-rename");
 
 function html() {
   return src(dir.src + '*.html')
@@ -72,6 +75,23 @@ function images() {
 }
 exports.images = images;
 
+function svgSprite() {
+  return src(dir.src + 'img/svg-sprite/*.svg')
+    .pipe(svgmin(function (file) {
+      return {
+        plugins: [{
+          cleanupIDs: {
+            minify: true
+          }
+        }]
+      }
+    }))
+    .pipe(svgstore({ inlineSvg: true }))
+    .pipe(rename('sprite.svg'))
+    .pipe(dest(dir.build + 'img/'));
+}
+exports.svgSprite = svgSprite;
+
 function fonts() {
   return src(dir.src + 'fonts/*.{ttf,eot,svg,woff,woff2}')
     .pipe(dest(dir.build + 'fonts/'));
@@ -102,15 +122,15 @@ function serve() {
   watch(dir.src + '*.html', html);
   watch(dir.src + '*js/*.js', script);
   watch(dir.src + 'img/*.{jpg,jpeg,png,svg,webp,gif}', images);
+  watch(dir.src + 'img/svg-sprite/*.svg', svgSprite);
   watch([
     dir.build + '*.html',
     dir.build + 'js/*.js',
-    dir.build + 'img/*.{jpg,jpeg,png,svg,webp,gif}',
   ]).on('change', browserSync.reload);
 }
 
 exports.default = series(
   clean,
-  parallel(styles, html, script, scriptsVendors, images, fonts),
+  parallel(styles, html, script, scriptsVendors, images, svgSprite, fonts),
   serve
 );

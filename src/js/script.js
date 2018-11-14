@@ -9,3 +9,5 @@
 // ready(function(){
 //   console.log('DOM ready');
 // });
+
+svg4everybody();

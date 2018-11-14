@@ -18,6 +18,7 @@ const uglify = require('gulp-uglify');
 const concat = require('gulp-concat');
 const ghPages = require('gh-pages');
 const path = require('path');
+const webp = require('gulp-webp');
 
 function html() {
   return src(dir.src + '*.html')
@@ -64,6 +65,7 @@ function scriptsVendors() {
 
 function images() {
   return src(dir.src + 'img/*.{jpg,jpeg,png,svg,webp,gif}')
+    .pipe(webp())
     .pipe(dest(dir.build + 'img/'));
 }
 exports.images = images;

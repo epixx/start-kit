@@ -35,6 +35,7 @@
     "gulp-sourcemaps": "^2.6.1",
     "gulp-uglify": "^3.0.1",
     "gulp-webp": "^3.0.0",
+    "gulp-webp-html": "git+https://github.com/nicothin/gulp-webp-html.git",
     "husky": "^1.1.3",
     "lint-staged": "^8.0.4",
     "stylelint": "^9.8.0"

@@ -19,10 +19,12 @@ const concat = require('gulp-concat');
 const ghPages = require('gh-pages');
 const path = require('path');
 const webp = require('gulp-webp');
+const webpHTML = require('gulp-webp-html');
 
 function html() {
   return src(dir.src + '*.html')
     .pipe(plumber())
+    .pipe(webpHTML())
     .pipe(dest(dir.build));
 }
 exports.html = html;

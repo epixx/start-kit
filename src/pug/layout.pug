@@ -1,0 +1,36 @@
+//- Стандартный шаблон страницы
+include mixins.pug
+
+doctype html
+html(class='page  no-js', lang='ru')
+
+  head
+    meta(charset='utf-8')
+
+    block meta
+      title Home
+
+    block head
+      link(rel='stylesheet', href='css/style.css')
+      script.
+        document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+
+  body
+    noscript У вас отключен JavaScript. Это пугает.
+
+    .page__inner
+      .page__content
+
+        block header
+          p Шапка
+
+        block content
+          p Cодержимое
+
+      .page__footer-wrapper
+        block footer
+          p Подвал
+
+    block page-bottom
+      script(src='js/vendors.min.js')
+      script(src='js/script.min.js')

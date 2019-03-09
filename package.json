@@ -1,6 +1,6 @@
 {
   "name": "EpicSkills-start-kit",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Start project.",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -13,14 +13,25 @@
     "url": "https://github.com/epixx/start-kit"
   },
   "devDependencies": {
+    "@babel/core": "^7.1.2",
+    "@babel/preset-env": "^7.1.0",
     "autoprefixer": "^9.0.2",
     "browser-sync": "^2.14.0",
-    "del": "^3.0.0",
+    "del": "^4.0.0",
     "gulp": "^4.0.0",
+    "gulp-babel": "^8.0.0",
+    "gulp-concat": "^2.6.1",
     "gulp-notify": "^3.0.0",
     "gulp-plumber": "^1.1.0",
     "gulp-postcss": "^8.0.0",
+    "gulp-pretty-html": "^2.0.9",
+    "gulp-pug": "^4.0.1",
+    "gulp-replace": "^1.0.0",
     "gulp-sass": "^4.0.1",
-    "gulp-sourcemaps": "^2.6.1"
+    "gulp-sourcemaps": "^2.6.1",
+    "gulp-uglify": "^3.0.1"
+  },
+  "dependencies": {
+    "svg4everybody": "^2.1.9"
   }
 }

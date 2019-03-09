@@ -3,7 +3,7 @@
   "version": "2.0.0",
   "description": "Start project.",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "bemlint": "bemlint build/*.html --mod='--'",
     "start": "gulp"
   },
   "author": "Nikolay Gromov",
@@ -16,6 +16,7 @@
     "@babel/core": "^7.1.2",
     "@babel/preset-env": "^7.1.0",
     "autoprefixer": "^9.0.2",
+    "bemlint": "^1.6.1",
     "browser-sync": "^2.14.0",
     "del": "^4.0.0",
     "gulp": "^4.0.0",

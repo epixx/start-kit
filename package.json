@@ -5,7 +5,8 @@
   "scripts": {
     "bemlint": "bemlint build/*.html --mod='--'",
     "puglint": "glob-exec \"src/**/*.pug\" -- \"pug-lint {{files.join(' ')}}\"",
-    "start": "gulp"
+    "start": "gulp",
+    "lint-staged": "lint-staged"
   },
   "author": "Nikolay Gromov",
   "license": "MIT",
@@ -13,9 +14,14 @@
     "type": "git",
     "url": "https://github.com/epixx/start-kit"
   },
+  "lint-staged": {
+    "*.{js,pug,md}": "editorconfig-cli",
+    "*.pug": "pug-lint"
+  },
   "devDependencies": {
     "@babel/core": "^7.1.2",
     "@babel/preset-env": "^7.1.0",
+    "@htmlacademy/editorconfig-cli": "^1.0.0",
     "autoprefixer": "^9.0.2",
     "bemlint": "^1.6.1",
     "browser-sync": "^2.14.0",
@@ -33,9 +39,16 @@
     "gulp-sass": "^4.0.1",
     "gulp-sourcemaps": "^2.6.1",
     "gulp-uglify": "^3.0.1",
+    "husky": "^1.3.1",
+    "lint-staged": "^8.1.5",
     "pug-lint": "^2.5.0"
   },
   "dependencies": {
     "svg4everybody": "^2.1.9"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }

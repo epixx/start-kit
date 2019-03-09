@@ -4,6 +4,7 @@
   "description": "Start project.",
   "scripts": {
     "bemlint": "bemlint build/*.html --mod='--'",
+    "puglint": "glob-exec \"src/**/*.pug\" -- \"pug-lint {{files.join(' ')}}\"",
     "start": "gulp"
   },
   "author": "Nikolay Gromov",
@@ -19,6 +20,7 @@
     "bemlint": "^1.6.1",
     "browser-sync": "^2.14.0",
     "del": "^4.0.0",
+    "glob-exec": "^0.1.1",
     "gulp": "^4.0.0",
     "gulp-babel": "^8.0.0",
     "gulp-concat": "^2.6.1",
@@ -30,7 +32,8 @@
     "gulp-replace": "^1.0.0",
     "gulp-sass": "^4.0.1",
     "gulp-sourcemaps": "^2.6.1",
-    "gulp-uglify": "^3.0.1"
+    "gulp-uglify": "^3.0.1",
+    "pug-lint": "^2.5.0"
   },
   "dependencies": {
     "svg4everybody": "^2.1.9"

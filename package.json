@@ -5,6 +5,7 @@
   "scripts": {
     "bemlint": "bemlint build/*.html --mod='--'",
     "puglint": "glob-exec \"src/**/*.pug\" -- \"pug-lint {{files.join(' ')}}\"",
+    "stylelint": "stylelint \"src/scss/**/*.scss\" --syntax=scss",
     "start": "gulp",
     "lint-staged": "lint-staged"
   },
@@ -16,7 +17,8 @@
   },
   "lint-staged": {
     "*.{js,pug,md}": "editorconfig-cli",
-    "*.pug": "pug-lint"
+    "*.pug": "pug-lint",
+    "*.scss": "stylelint --syntax=scss"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",
@@ -41,7 +43,10 @@
     "gulp-uglify": "^3.0.1",
     "husky": "^1.3.1",
     "lint-staged": "^8.1.5",
-    "pug-lint": "^2.5.0"
+    "pug-lint": "^2.5.0",
+    "stylelint": "^9.10.1",
+    "stylelint-order": "^2.1.0",
+    "stylelint-selector-bem-pattern": "^2.0.0"
   },
   "dependencies": {
     "svg4everybody": "^2.1.9"

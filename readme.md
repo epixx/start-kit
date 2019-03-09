@@ -1,10 +1,16 @@
 # EpicSkills start kit [![devDependencies Status](https://david-dm.org/epixx/start-kit/dev-status.svg)](https://david-dm.org/epixx/start-kit?type=dev) [![dependencies Status](https://david-dm.org/epixx/start-kit/status.svg)](https://david-dm.org/epixx/start-kit)
 
+Обязательно установите поддержку [editorconfig](https://editorconfig.org/#download) в ваш редактор кода.
+
 ```bash
-npm i           # установить зависимости
-npm start       # запустить сервер разработки (остановить: Ctrl+C)
-npm run bemlint # проверить html-файлы папки build на соответствие BEM
+npm i             # установить зависимости
+npm start         # запустить сервер разработки (остановить: Ctrl+C)
+npm run bemlint   # проверить html-файлы папки build на соответствие BEM
+npm run puglint   # проверить pug-файлы
+npm run stylelint # проверить scss-файлы
 ```
+
+Перед коммитом происходит автопроверка файлов. Если проверка выявила ошибки, они будут показаны в терминале.
 
 ## К прочтению / ознакомлению
 

@@ -1,11 +1,11 @@
-'use strict';
-
-const dir =  {
+const dir = {
   src: './src/',
   build: './build/',
 };
 
-const { series, parallel, src, dest, watch } = require('gulp');
+const {
+  series, parallel, src, dest, watch,
+} = require('gulp');
 const plumber = require('gulp-plumber');
 const sass = require('gulp-sass');
 const sourcemaps = require('gulp-sourcemaps');
@@ -21,18 +21,18 @@ const prettyHtml = require('gulp-pretty-html');
 const replace = require('gulp-replace');
 
 function compilePug() {
-  return src(dir.src + 'pages/**/*.pug')
+  return src(`${dir.src}pages/**/*.pug`)
     .pipe(plumber({
-      errorHandler: function (err) {
+      errorHandler(err) {
         console.log(err.message);
         this.emit('end');
-      }
+      },
     }))
     .pipe(pug())
     .pipe(prettyHtml({
       indent_size: 2,
       indent_char: ' ',
-      unformatted: ['code', 'em', 'strong', 'span', 'i', 'b', 'br', ],
+      unformatted: ['code', 'em', 'strong', 'span', 'i', 'b', 'br'],
       content_unformatted: [],
     }))
     .pipe(replace(/^(\s*)(<button.+?>)(.*)(<\/button>)/gm, '$1$2\n$1  $3\n$1$4'))
@@ -42,13 +42,19 @@ function compilePug() {
 }
 exports.compilePug = compilePug;
 
+function copyHtml() {
+  return src(`${dir.src}/*.html`)
+    .pipe(dest(dir.build));
+}
+exports.copyHtml = copyHtml;
+
 function compileStyles() {
-  return src(dir.src + 'scss/style.scss')
+  return src(`${dir.src}scss/style.scss`)
     .pipe(plumber({
-      errorHandler: function (err) {
+      errorHandler(err) {
         console.log(err.message);
         this.emit('end');
-      }
+      },
     }))
     .pipe(sourcemaps.init())
     .pipe(sass())
@@ -56,50 +62,50 @@ function compileStyles() {
       autoprefixer(),
     ]))
     .pipe(sourcemaps.write('/'))
-    .pipe(dest(dir.build + 'css/'))
+    .pipe(dest(`${dir.build}css/`))
     .pipe(browserSync.stream());
 }
 exports.compileStyles = compileStyles;
 
 function processJs() {
-  return src(dir.src + 'js/script.js')
+  return src(`${dir.src}js/script.js`)
     .pipe(plumber({
-      errorHandler: function (err) {
+      errorHandler(err) {
         console.log(err.message);
         this.emit('end');
-      }
+      },
     }))
     .pipe(babel({
-        presets: ['@babel/env']
+      presets: ['@babel/env'],
     }))
     .pipe(uglify())
     .pipe(concat('script.min.js'))
-    .pipe(dest(dir.build + 'js/'))
+    .pipe(dest(`${dir.build}js/`));
 }
 exports.processJs = processJs;
 
 function copyJsVendors() {
   return src([
-      'node_modules/svg4everybody/dist/svg4everybody.min.js'
-    ])
+    'node_modules/svg4everybody/dist/svg4everybody.min.js',
+  ])
     .pipe(concat('vendors.min.js'))
-    .pipe(dest(dir.build + 'js/'))
+    .pipe(dest(`${dir.build}js/`));
 }
 
 function copyImages() {
-  return src(dir.src + 'img/*.{jpg,jpeg,png,svg,webp,gif}')
-    .pipe(dest(dir.build + 'img/'));
+  return src(`${dir.src}img/*.{jpg,jpeg,png,svg,webp,gif}`)
+    .pipe(dest(`${dir.build}img/`));
 }
 exports.copyImages = copyImages;
 
 function copyFonts() {
-  return src(dir.src + 'fonts/*.{ttf,eot,svg,woff,woff2}')
-    .pipe(dest(dir.build + 'fonts/'));
+  return src(`${dir.src}fonts/*.{ttf,eot,svg,woff,woff2}`)
+    .pipe(dest(`${dir.build}fonts/`));
 }
 exports.copyFonts = copyFonts;
 
 function clean() {
-  return del(dir.build)
+  return del(dir.build);
 }
 exports.clean = clean;
 
@@ -112,24 +118,26 @@ function serve() {
     notify: false,
   });
   watch([
-    dir.src + 'scss/*.scss',
-    dir.src + 'scss/blocks/*.scss',
+    `${dir.src}scss/*.scss`,
+    `${dir.src}scss/blocks/*.scss`,
   ], compileStyles);
   watch([
-    dir.src + 'pages/*.pug',
-    dir.src + 'pug/*.pug',
+    `${dir.src}pages/*.pug`,
+    `${dir.src}pug/*.pug`,
   ], compilePug);
-  watch(dir.src + 'js/*.js', processJs);
-  watch(dir.src + 'img/*.{jpg,jpeg,png,svg,webp,gif}', copyImages);
+  watch(`${dir.src}js/*.js`, processJs);
+  watch(`${dir.src}*.html`, copyHtml);
+  watch(`${dir.src}img/*.{jpg,jpeg,png,svg,webp,gif}`, copyImages);
   watch([
-    dir.build + '*.html',
-    dir.build + 'js/*.js',
-    dir.build + 'img/*.{jpg,jpeg,png,svg,webp,gif}',
+    `${dir.build}*.html`,
+    `${dir.build}js/*.js`,
+    `${dir.build}img/*.{jpg,jpeg,png,svg,webp,gif}`,
   ]).on('change', browserSync.reload);
 }
 
 exports.default = series(
   clean,
+  copyHtml,
   parallel(compileStyles, compilePug, processJs, copyJsVendors, copyImages, copyFonts),
-  serve
+  serve,
 );

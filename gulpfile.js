@@ -109,6 +109,7 @@ function serve() {
     startPath: 'index.html',
     open: false,
     port: 8080,
+    notify: false,
   });
   watch([
     dir.src + 'scss/*.scss',

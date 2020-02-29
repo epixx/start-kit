@@ -1,9 +1,9 @@
 {
-  "name": "EpicSkills-start-kit",
-  "version": "2.0.0",
+  "name": "epicskills-start-kit",
+  "version": "3.0.0",
   "description": "Start project.",
   "scripts": {
-    "bemlint": "bemlint build/*.html --mod='--'",
+    "bemlint": "bemlint build/*.html --mod='--' --errors",
     "puglint": "glob-exec \"src/**/*.pug\" -- \"pug-lint {{files.join(' ')}}\"",
     "stylelint": "stylelint \"src/scss/**/*.scss\" --syntax=scss",
     "start": "gulp",
@@ -41,12 +41,11 @@
     "gulp-sass": "^4.0.1",
     "gulp-sourcemaps": "^2.6.1",
     "gulp-uglify": "^3.0.1",
-    "husky": "^3.0.9",
-    "lint-staged": "^9.4.3",
+    "husky": "^4.2.3",
+    "lint-staged": "^10.0.8",
     "pug-lint": "^2.5.0",
-    "stylelint": "^11.1.1",
-    "stylelint-order": "^3.1.1",
-    "stylelint-selector-bem-pattern": "^2.0.0"
+    "stylelint": "^13.2.0",
+    "stylelint-order": "^4.0.0"
   },
   "dependencies": {
     "svg4everybody": "^2.1.9"
@@ -57,7 +56,7 @@
   ],
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "lint-staged && bemlint"
     }
   }
 }

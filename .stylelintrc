@@ -1,40 +1,9 @@
 {
   "syntax": "scss",
   "plugins": [
-    "stylelint-selector-bem-pattern",
     "stylelint-order"
   ],
   "rules": {
-    # Проверка совпадения селектора и имени файла, БЭМ-ошибок
-    # https://github.com/postcss/postcss-bem-linter#custom-patterns
-    "plugin/selector-bem-pattern": [{
-      "implicitComponents": true,
-      "componentName": "[-a-z]+",
-      "componentSelectors": {
-        "initial": "^(\\.{componentName}(__[a-z]+|--[-a-z0-9]+|__[-a-z]+--[-a-z0-9]+|.[-a-z]+|__[a-z]+.[-a-z]+)?)$",
-        "combined": "^.+$"
-      },
-      "ignoreSelectors": [
-        "^\\.(no-)?js(-modal-open)?$",
-        "a(\\[[a-z]+|:[a-z]+)?",
-        "h[1-6]",
-        "pre",
-        "blockquote",
-        "thead",
-        "tr",
-        "img",
-        "img",
-        "p",
-        "table",
-        "^&:empty",
-        "#{\\$[-a-z]+}__[-a-z]+",
-        "^\\*$"
-      ],
-    },
-    {
-      "severity": "warning",
-      "message": "Селектор не из имени файла или БЭМ-ошибка"
-    }],
     # Проверка очередности в контексте селектора
     # https://github.com/hudochenkov/stylelint-order/blob/master/rules/order/README.md
     "order/order": [
@@ -47,6 +16,11 @@
       },
       # Свойства
       "declarations",
+      # Сторонние вложенные селекторы
+      {
+        "type": "rule",
+        "selector": "^\\.[-_a-zA-Z0-9]+"
+      },
       # Медиаусловия
       {
         "type": "at-rule",
@@ -57,21 +31,16 @@
         "type": "rule",
         "selector": "^&:\\w+$"
       },
-      # Сторонние вложенные селекторы
-      {
-        "type": "rule",
-        "selector": "^\\.[-_a-zA-Z0-9]+"
-      },
       # Элементы блока
       {
         "type": "rule",
-        "selector": "^&__[-a-z0-9]+",
+        "selector": "^&__[-a-z0-9]+"
       },
       # Модификаторы блока
       {
         "type": "rule",
-        "selector": "^&--[-a-z0-9]+",
-      }
+        "selector": "^&--[-a-z0-9]+"
+      },
     ],
     # Проверка очередности правил
     # https://github.com/hudochenkov/stylelint-order/blob/master/rules/properties-order/README.md
@@ -80,6 +49,12 @@
         "properties": [
           "content",
           "box-sizing",
+          "position",
+          "z-index",
+          "top",
+          "right",
+          "bottom",
+          "left",
           "display",
           "flex",
           "flex-wrap",
@@ -88,10 +63,10 @@
           "flex-flow",
           "flex-grow",
           "flex-shrink",
+          "justify-content",
           "align-content",
           "align-items",
           "align-self",
-          "justify-content",
           "order",
           "grid",
           "grid-area",
@@ -103,30 +78,192 @@
           "grid-row-*",
           "grid-template",
           "grid-template-*",
-          "position",
-          "z-index",
-          "top",
-          "right",
-          "bottom",
-          "left",
+          'float',
+          'clear',
           "width",
           "min-width",
           "max-width",
           "height",
           "min-height",
           "max-height",
-          "overflow",
-          "overflow-*",
-          "margin",
-          "margin-*",
+          'margin',
+          'margin-top',
+          'margin-right',
+          'margin-bottom',
+          'margin-left',
           "border",
-          "border-*",
+          "border-color",
+          "border-style",
+          "border-width",
+          "border-top",
+          "border-top-color",
+          "border-top-width",
+          "border-top-style",
+          "border-right",
+          "border-right-color",
+          "border-right-width",
+          "border-right-style",
+          "border-bottom",
+          "border-bottom-color",
+          "border-bottom-width",
+          "border-bottom-style",
+          "border-left",
+          "border-left-color",
+          "border-left-width",
+          "border-left-style",
+          "border-radius",
+          "border-top-left-radius",
+          "border-top-right-radius",
+          "border-bottom-right-radius",
+          "border-bottom-left-radius",
+          "border-image",
+          "border-image-source",
+          "border-image-slice",
+          "border-image-width",
+          "border-image-outset",
+          "border-image-repeat",
+          "border-collapse",
+          "border-spacing",
           "padding",
-          "padding-*",
+          "padding-top",
+          "padding-right",
+          "padding-bottom",
+          "padding-left",
+          "overflow",
+          "overflow-x",
+          "overflow-y",
         ]
       },
       {
-        # "emptyLineBefore": "always",
+        "properties": [
+          "color",
+          "font",
+          "font-size",
+          "font-family",
+          "font-weight",
+          "font-style",
+          "font-variant",
+          "font-size-adjust",
+          "font-stretch",
+          "font-effect",
+          "font-emphasize",
+          "font-emphasize-position",
+          "font-emphasize-style",
+          "font-smooth",
+          "line-height",
+          "direction",
+          "letter-spacing",
+          "white-space",
+          "text-align",
+          "text-align-last",
+          "text-transform",
+          "text-decoration",
+          "text-emphasis",
+          "text-emphasis-color",
+          "text-emphasis-style",
+          "text-emphasis-position",
+          "text-indent",
+          "text-justify",
+          "text-outline",
+          "text-wrap",
+          "text-overflow",
+          "text-overflow-ellipsis",
+          "text-overflow-mode",
+          "text-orientation",
+          "text-shadow",
+          "vertical-align",
+          "word-wrap",
+          "word-break",
+          "word-spacing",
+          "overflow-wrap",
+          "tab-size",
+          "hyphens",
+          "unicode-bidi",
+          "columns",
+          "column-count",
+          "column-fill",
+          "column-gap",
+          "column-rule",
+          "column-rule-color",
+          "column-rule-style",
+          "column-rule-width",
+          "column-span",
+          "column-width",
+          "page-break-after",
+          "page-break-before",
+          "page-break-inside",
+          "src"
+        ]
+      },
+      {
+        "properties": [
+          "list-style",
+          "list-style-position",
+          "list-style-type",
+          "list-style-image",
+          "table-layout",
+          "empty-cells",
+          "caption-side",
+          "background",
+          "background-color",
+          "background-image",
+          "background-repeat",
+          "background-position",
+          "background-position-x",
+          "background-position-y",
+          "background-size",
+          "background-clip",
+          "background-origin",
+          "background-attachment",
+          "background-blend-mode",
+          "outline",
+          "outline-width",
+          "outline-style",
+          "outline-color",
+          "outline-offset",
+          "box-shadow",
+          "box-decoration-break",
+          "transform",
+          "transform-origin",
+          "transform-style",
+          "backface-visibility",
+          "perspective",
+          "perspective-origin",
+          "visibility",
+          "cursor",
+          "opacity",
+          "filter",
+          "isolation",
+          "backdrop-filter",
+          "mix-blend-mode",
+        ]
+      },
+      {
+        "properties": [
+          "appearance",
+          "clip",
+          "clip-path",
+          "counter-reset",
+          "counter-increment",
+          "resize",
+          "user-select",
+          "nav-index",
+          "nav-up",
+          "nav-right",
+          "nav-down",
+          "nav-left",
+          "pointer-events",
+          "quotes",
+          "touch-action",
+          "will-change",
+          "zoom",
+          "fill",
+          "fill-rule",
+          "clip-rule",
+          "stroke",
+        ]
+      },
+      {
         "properties": [
           "transform",
           "transform-*",
@@ -139,11 +276,7 @@
           "animation-*",
         ]
       },
-    ],
-      {
-        "severity": "warning",
-      }
-    ],
+    ]],
     # http://stylelint.io/user-guide/rules/
     "color-hex-case": ["lower", {
       "severity": "warning",
@@ -155,7 +288,7 @@
     "color-no-invalid-hex": [true, {
       "message": "HEX цвета правильно написаны быть должны"
     }],
-    "font-family-name-quotes": ["always-where-recommended", {
+    "font-family-name-quotes": ["always-unless-keyword", {
       "message": "В кавычки шрифта название брать следует"
     }],
     "font-family-no-duplicate-names": [true, {
@@ -166,7 +299,7 @@
     }],
     "font-weight-notation": ["numeric", {
       "message": "Плотность — цифрой: https://goo.gl/58eKi7",
-      ignore: ["relative"]
+      "ignore": ["relative"]
     }],
     # "function-calc-no-invalid": [true, {
     #   "message": "Для calc() некорректен синтаксис этот"
@@ -284,6 +417,7 @@
     "declaration-property-unit-blacklist": [{
         "font-size": ["pt"],
         "/^animation/": ["ms"],
+        "/^margin/": ["%"],
         "/^padding/": ["%"]
       }, {
       "message": "Для этого свойства данные единицы измерения в чёрном списке"
@@ -360,7 +494,7 @@
     "selector-no-qualifying-type": [true, {
       "severity": "warning",
       "message": "Возможно, перенасыщенный селектор (использован селектор типа)",
-      ignore: ["attribute"]
+      "ignore": ["attribute"]
     }],
     "selector-pseudo-class-case": ["lower", {
       "message": "Псевдоклассы набирать буквами строчными надо"
@@ -381,6 +515,8 @@
       "message": "Селекторы буквами строчными набирать следует"
     }],
     "selector-type-no-unknown": [true, {
+      # ignore: ["custom-elements"],
+      "ignoreTypes": ["/^app-/"],
       "message": "Селектора такого на светлой стороне силы нет"
     }],
     "selector-max-empty-lines": [0, {
@@ -400,7 +536,7 @@
     }],
     "rule-empty-line-before": ["always", {
       "message": "Перед селектором вложенным строку пустую оставь",
-      ignore: ["after-comment"]
+      "ignore": ["after-comment"]
     }],
     "media-feature-colon-space-after": ["always", {
       "message": "В @media после «:» пробелы необходимы"
@@ -429,8 +565,8 @@
     }],
     "at-rule-empty-line-before": ["always", {
       "message": "Перед @-правилами строку пустую оставь (кроме @import и @include)",
-      ignoreAtRules: ["import", "include", "function", "return", "if", "else"],
-      ignore: ["after-comment"]
+      "ignoreAtRules": ["import", "include", "function", "return", "if", "else"],
+      "ignore": ["after-comment"]
     }],
     "at-rule-name-case": ["lower", {
       "message": "@-правила буквами строчными набирать следует"
@@ -440,7 +576,7 @@
     }],
     "at-rule-no-unknown": [true, {
       "message": "Неизвестное @-правило",
-      ignoreAtRules: [
+      "ignoreAtRules": [
         "/^at-/",
         "/^mixin/",
         "/^include/",
@@ -463,8 +599,8 @@
     }],
     "comment-empty-line-before": ["always", {
       "message": "Перед комментом пустая строка требуется",
-      except: ["first-nested"],
-      ignore: ["stylelint-commands"]
+      "except": ["first-nested"],
+      "ignore": ["stylelint-commands"]
     }],
     "comment-no-empty": [true, {
       "message": "Пустой коммент убрать нужно"
@@ -529,7 +665,7 @@
       "message": "Селекторов по тегу более двух использовать не стоит"
     }],
     "selector-max-class": [2, {
-      # "severity": "warning",
+      "severity": "warning",
       "message": "Классов в селекторе более двух использовать не стоит"
     }],
     "selector-max-combinators": [2, {
@@ -558,6 +694,9 @@
     "linebreaks": ["unix", {
       "severity": "warning",
       "message": "Окончания строк должны быть LF. Настроить редактор следует"
+    }],
+    "declaration-empty-line-before": ["never", {
+      "message": "Строку пустую над правилом не хочешь ты"
     }],
   }
 }

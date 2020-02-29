@@ -25,7 +25,7 @@
     "@babel/preset-env": "^7.1.0",
     "@htmlacademy/editorconfig-cli": "^1.0.0",
     "autoprefixer": "^9.0.2",
-    "bemlint": "^1.6.1",
+    "bemlint": "^1.7.0",
     "browser-sync": "^2.14.0",
     "del": "^5.1.0",
     "glob-exec": "^0.1.1",
@@ -56,7 +56,7 @@
   ],
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged && bemlint"
+      "pre-commit": "lint-staged && bemlint build/*.html --mod='--' --errors"
     }
   }
 }

@@ -16,31 +16,24 @@ const del = require('del');
 const babel = require('gulp-babel');
 const uglify = require('gulp-uglify');
 const concat = require('gulp-concat');
-const pug = require('gulp-pug');
-const prettyHtml = require('gulp-pretty-html');
-const replace = require('gulp-replace');
+const fileinclude = require('gulp-file-include');
 
-function compilePug() {
-  return src(dir.src + 'pages/**/*.pug')
+function compileHTML() {
+  return src(dir.src + '*.html')
     .pipe(plumber({
       errorHandler: function (err) {
         console.log(err.message);
         this.emit('end');
       }
     }))
-    .pipe(pug())
-    .pipe(prettyHtml({
-      indent_size: 2,
-      indent_char: ' ',
-      unformatted: ['code', 'em', 'strong', 'span', 'i', 'b', 'br', ],
-      content_unformatted: [],
+    .pipe(fileinclude({
+      prefix: '@@',
+      basepath: '@file',
+      indent: true,
     }))
-    .pipe(replace(/^(\s*)(<button.+?>)(.*)(<\/button>)/gm, '$1$2\n$1  $3\n$1$4'))
-    .pipe(replace(/^( *)(<.+?>)(<script>)([\s\S]*)(<\/script>)/gm, '$1$2\n$1$3\n$4\n$1$5\n'))
-    .pipe(replace(/^( *)(<.+?>)(<script\s+src.+>)(?:[\s\S]*)(<\/script>)/gm, '$1$2\n$1$3$4'))
     .pipe(dest(dir.build));
 }
-exports.compilePug = compilePug;
+exports.compileHTML = compileHTML;
 
 function compileStyles() {
   return src(dir.src + 'scss/style.scss')
@@ -115,9 +108,9 @@ function serve() {
     dir.src + 'scss/blocks/*.scss',
   ], compileStyles);
   watch([
-    dir.src + 'pages/*.pug',
-    dir.src + 'pug/*.pug',
-  ], compilePug);
+    dir.src + '*.html',
+    dir.src + 'includes/*.html',
+  ], compileHTML);
   watch(dir.src + 'js/*.js', processJs);
   watch(dir.src + 'img/*.{jpg,jpeg,png,svg,webp,gif}', copyImages);
   watch([
@@ -129,6 +122,6 @@ function serve() {
 
 exports.default = series(
   clean,
-  parallel(compileStyles, compilePug, processJs, copyJsVendors, copyImages, copyFonts),
+  parallel(compileStyles, compileHTML, processJs, copyJsVendors, copyImages, copyFonts),
   serve
 );

@@ -1,4 +1,4 @@
-# EpicSkills start kit [![devDependencies Status](https://david-dm.org/epixx/start-kit/dev-status.svg)](https://david-dm.org/epixx/start-kit?type=dev) [![dependencies Status](https://david-dm.org/epixx/start-kit/status.svg)](https://david-dm.org/epixx/start-kit)
+# EpicSkills start kit
 
 Обязательно добавьте поддержку [editorconfig](https://editorconfig.org/#download) в ваш редактор кода.
 
